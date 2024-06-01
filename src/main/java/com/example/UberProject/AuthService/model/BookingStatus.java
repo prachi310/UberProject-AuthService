@@ -1,4 +1,4 @@
-package model;
+package com.example.UberProject.AuthService.model;
 
 
 public enum BookingStatus {
