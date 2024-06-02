@@ -5,65 +5,79 @@ import com.example.UberProject.AuthService.Dto.AuthResponseDto;
 import com.example.UberProject.AuthService.Dto.PassengerDto;
 import com.example.UberProject.AuthService.Dto.PassengerSignUpDto;
 import com.example.UberProject.AuthService.service.AuthService;
-import com.example.UberProject.AuthService.service.JWTService;
+import com.example.UberProject.AuthService.service.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Value("${cookie.expiry}")
-    private Integer cookieExpiry;
-
+    private int cookieExpiry;
     private final AuthService authService;
 
     private final AuthenticationManager authenticationManager;
 
-    private final JWTService jwtService;
+    private final JwtService jwtService;
 
-    private AuthController(AuthService authService, AuthenticationManager authenticationManager, JWTService jwtService) {
-        this.authService= authService;
-        this.authenticationManager = authenticationManager;
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager,
+           JwtService jwtService) {
+        this.authService = authService;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/signUp/passenger")
-    public ResponseEntity<PassengerDto> signUpPassenger(@RequestBody PassengerSignUpDto passengerSignUpDto)
-    {
-        PassengerDto passengerDto = authService.signUpPassenger(passengerSignUpDto);
-        return new ResponseEntity<>(passengerDto, HttpStatus.OK);
-        }
-
-    @PostMapping("/signIn/passenger")
-    public ResponseEntity<?> signInPassenger(@RequestBody AuthRequestDto authRequestDto,
-                                             HttpServletResponse httpServletResponse)
-    {
-        Authentication authentication = authenticationManager.
-                authenticate(new UsernamePasswordAuthenticationToken(authRequestDto.getEmail(),authRequestDto.getPassword()));
-        if(authentication.isAuthenticated()) {
-            String jwtToken = jwtService.CreateToken(authRequestDto.getEmail());
-            ResponseCookie cookie = ResponseCookie.from("JWTtoken",jwtToken)
-                    .httpOnly(true).secure(false).maxAge(cookieExpiry)
-                    .path("/").build();
-            httpServletResponse.setHeader(HttpHeaders.SET_COOKIE,cookie.toString());
-            return new ResponseEntity<>(AuthResponseDto.builder().success(true).build(),
-                    HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Auth not successful",HttpStatus.NOT_FOUND);
+    public ResponseEntity<PassengerDto> signUp(@RequestBody PassengerSignUpDto passengerSignupDto) {
+        PassengerDto response = authService.signupPassenger(passengerSignupDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PostMapping("/signIn/passenger")
+    public ResponseEntity<?> signIn(@RequestBody AuthRequestDto authRequestDto,
+                                    HttpServletResponse response) {
+        System.out.println("Request received " + authRequestDto.getEmail() + " " +
+                authRequestDto.getPassword());
+        Authentication authentication = authenticationManager.authenticate
+                (new UsernamePasswordAuthenticationToken(authRequestDto.getEmail(),
+                        authRequestDto.getPassword()));
+        if(authentication.isAuthenticated()) {
+            String jwtToken = jwtService.createToken(authRequestDto.getEmail());
+
+            ResponseCookie cookie = ResponseCookie.from("JwtToken", jwtToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(7*24*3600)
+                    .build();
+
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            return new ResponseEntity<>(AuthResponseDto.builder().success(true).build(),
+                    HttpStatus.OK);
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validate(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("Inside validate controller");
+        for(Cookie cookie: request.getCookies()) {
+            System.out.println(cookie.getName() + " " + cookie.getValue());
+        }
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
 }

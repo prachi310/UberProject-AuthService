@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * This class is responsible for loading the user in the form of UserDetails object for auth.
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -19,13 +22,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        Optional<Passenger> passenger = passengerRepository.findPassengerByEmail(email);
-        if(passenger.isPresent())
-        {
+        Optional<Passenger> passenger = passengerRepository.findPassengerByEmail(email); // email is the unique identifier
+        if(passenger.isPresent()) {
             return new AuthPassengerDetail(passenger.get());
-        }else {
-            throw new UsernameNotFoundException("can not find passenger by given email");
+        } else {
+            throw new UsernameNotFoundException("Cannot find the Passenger by the given Email");
         }
     }
 }

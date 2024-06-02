@@ -1,5 +1,4 @@
 package com.example.UberProject.AuthService.service;
-
 import com.example.UberProject.AuthService.Dto.PassengerDto;
 import com.example.UberProject.AuthService.Dto.PassengerSignUpDto;
 import com.example.UberProject.AuthService.Repository.PassengerRepository;
@@ -11,26 +10,24 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final PassengerRepository passengerRepository;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AuthService(PassengerRepository passengerRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder)
-    {
-        this.passengerRepository=passengerRepository;
+    public AuthService(PassengerRepository passengerRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.passengerRepository = passengerRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public PassengerDto signUpPassenger(PassengerSignUpDto passengerSignUpDto)
-    {
-        Passenger passenger =Passenger.builder().
-                email(passengerSignUpDto.getEmail()).
-                name(passengerSignUpDto.getName()).
-                phoneNumber(passengerSignUpDto.getPhoneNumber())
-                .password(bCryptPasswordEncoder.encode(passengerSignUpDto.getPassword()))
+    public PassengerDto signupPassenger(PassengerSignUpDto passengerSignupRequestDto) {
+        Passenger passenger = Passenger.builder()
+                .email(passengerSignupRequestDto.getEmail())
+                .name(passengerSignupRequestDto.getName())
+                .password(bCryptPasswordEncoder.encode(passengerSignupRequestDto.getPassword())) // TODO: Encrypt the password
+                .phoneNumber(passengerSignupRequestDto.getPhoneNumber())
                 .build();
 
-       Passenger newPassenger = passengerRepository.save(passenger);
-       return (PassengerDto.from(newPassenger));
+        Passenger newPassenger = passengerRepository.save(passenger);
 
+        return PassengerDto.from(newPassenger);
     }
 }
