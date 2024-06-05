@@ -1,7 +1,7 @@
 package com.example.UberProject.AuthService.Dto;
 
+import com.example.UberProject_EntityService.models.Passenger;
 import lombok.*;
-import com.example.UberProject.AuthService.model.Passenger;
 
 import java.util.Date;
 
