@@ -15,7 +15,8 @@ https://github.com/prachi310/uber-microservices-project/blob/main/UberAuthServic
 4. Configure MYSQL database properties in application properties (`application.yml`).
 5. Run the application with `./gradlew bootRun`.
 
-## Database Schema
+## Passenger Database Schema 
+
 ![image](https://github.com/prachi310/UberProject-AuthService/assets/77889166/1723aee4-d5ad-4d86-b553-a88a82e65de2)
 
 
