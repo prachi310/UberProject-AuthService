@@ -16,20 +16,7 @@ https://github.com/prachi310/uber-microservices-project/blob/main/UberAuthServic
 5. Run the application with `mvn spring-boot:run`.
 
 ## Database Schema
-+------------------------+--------------+------+-----+---------+----------------+
-| Field                  | Type         | Null | Key | Default | Extra          |
-+------------------------+--------------+------+-----+---------+----------------+
-| id                     | bigint       | NO   | PRI | NULL    | auto_increment |
-| created_at             | datetime     | NO   |     | NULL    |                |
-| updated_at             | datetime     | NO   |     | NULL    |                |
-| name                   | varchar(255) | NO   |     | NULL    |                |
-| phone_number           | varchar(255) | NO   |     | NULL    |                |
-| email                  | varchar(255) | NO   |     | NULL    |                |
-| password               | varchar(255) | NO   |     | NULL    |                |
-| active_booking_id      | bigint       | YES  | MUL | NULL    |                |
-| home_id                | bigint       | YES  | MUL | NULL    |                |
-| last_known_location_id | bigint       | YES  | MUL | NULL    |                |
-| rating                 | double       | YES  |     | NULL    |                |
-+------------------------+--------------+------+-----+---------+----------------+
+![image](https://github.com/prachi310/UberProject-AuthService/assets/77889166/1723aee4-d5ad-4d86-b553-a88a82e65de2)
+
 
 
