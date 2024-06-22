@@ -11,9 +11,9 @@ https://github.com/prachi310/uber-microservices-project/blob/main/UberAuthServic
 
 ## Setup
 1. Clone the repository.
-2. Install dependencies with `mvn install`.
+2. Install dependencies with `gradle build`.
 4. Configure MYSQL database properties in application properties (`application.yml`).
-5. Run the application with `mvn spring-boot:run`.
+5. Run the application with `./gradlew bootRun`.
 
 ## Database Schema
 ![image](https://github.com/prachi310/UberProject-AuthService/assets/77889166/1723aee4-d5ad-4d86-b553-a88a82e65de2)
